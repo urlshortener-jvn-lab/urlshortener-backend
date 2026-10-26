@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>UrlShortener.AppHost</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <UserSecretsId>d9501e54-bce3-4647-8e5b-09246e578dcf</UserSecretsId>
+  </PropertyGroup>
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="13.1.0" />
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting" />
+    <PackageReference Include="Aspire.Hosting.AppHost" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+    <PackageReference Include="Aspire.Hosting.Redis" />
+    <PackageReference Include="Scalar.Aspire" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UrlShortener.API\UrlShortener.API.csproj" />
+  </ItemGroup>
+</Project>

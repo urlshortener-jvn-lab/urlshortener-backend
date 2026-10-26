@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>UrlShortener.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UrlShortener.Domain\UrlShortener.Domain.csproj" />
+  </ItemGroup>
+</Project>

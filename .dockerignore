@@ -1,0 +1,21 @@
+# Ignore build outputs
+**/bin/
+**/obj/
+**/out/
+**/publish/
+
+# Ignore IDE and user-specific files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore git and local env
+.git/
+.gitignore
+.env
+*.md
+Dockerfile*
