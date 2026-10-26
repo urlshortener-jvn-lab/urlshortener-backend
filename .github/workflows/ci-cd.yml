@@ -61,9 +61,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Short SHA Tag
+      - name: Extract Short SHA & Lowercase Owner
         id: vars
-        run: echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: |
+          echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
@@ -72,18 +74,21 @@ jobs:
           file: ./src/UrlShortener.API/Dockerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/urlshortener-api:${{ steps.vars.outputs.short_sha }}
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/urlshortener-api:latest
+            ${{ env.REGISTRY }}/${{ steps.vars.outputs.owner }}/urlshortener-api:${{ steps.vars.outputs.short_sha }}
+            ${{ env.REGISTRY }}/${{ steps.vars.outputs.owner }}/urlshortener-api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Update Manifests Repo (GitOps Auto-Tag Update)
-        if: ${{ secrets.MANIFEST_REPO_TOKEN != '' }}
         env:
           MANIFEST_TOKEN: ${{ secrets.MANIFEST_REPO_TOKEN }}
           OWNER: ${{ github.repository_owner }}
           NEW_TAG: ${{ steps.vars.outputs.short_sha }}
         run: |
+          if [ -z "$MANIFEST_TOKEN" ]; then
+            echo "Chưa cấu hình MANIFEST_REPO_TOKEN, bỏ qua bước tự động cập nhật repo manifests."
+            exit 0
+          fi
           git clone https://x-access-token:${MANIFEST_TOKEN}@github.com/${OWNER}/urlshortener-manifests.git manifests
           cd manifests
           sed -i "s|backendTag:.*|backendTag: \"${NEW_TAG}\"|g" helm/urlshortener/values.yaml || true
